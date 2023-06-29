@@ -23,6 +23,10 @@
     height: 97px;
     margin: 0 20px 20px 0;
   }
+  .calculator-window::after {
+    top: 7%;
+    left: 42%;
+  }
   .calculator-controls-button {
     font-size: 10px;
     width: 26px;
@@ -50,6 +54,10 @@
 @media (max-width: 550px) {
   .caclulator {
     max-width: 27%;
+  }
+  .calculator-window::after {
+    top: 7%;
+    left: 45%;
   }
   .calculator-controls-button {
     font-size: 4px;
