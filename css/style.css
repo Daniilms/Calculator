@@ -1,0 +1,171 @@
+body {
+  font-family: 'Courier New', Courier, monospace;
+  box-sizing: border-box;
+}
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.calculator-wrp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 200px 0 0 0;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.caclulator {
+  position: relative;
+  height: 100%;
+  max-width: 22%;
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: #191919;
+
+}
+.calculator-window {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-grow: 1;
+  z-index: 3;
+  height: 200px;
+  margin: 0 20px 20px 0;
+}
+.calculator-user-input {
+  font-size: 30px;
+  font-weight: 700;
+  color: white;
+}
+.calculator-user-input-operation {
+  font-size: 15px;
+  font-weight: 700;
+  opacity: .7;
+  color: #a160fb;
+}
+.calculator-controls-wrp {
+  position: relative;
+  /* height: 54%; */
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  /* margin: 0 0 20px 0; */
+  background-color: #312f2f;
+}
+.calculator-controls {
+  display: grid;
+  justify-content: center;
+  gap: 5px;
+  grid-template-areas: 
+  'c plus-minus percent devision'
+  'seven eight nine multi'
+  'four five six minus'
+  'one two three plus'
+  'zero zero dot equal'
+  ;
+}
+
+.calculator-controls-operations {
+}
+.calculator-controls-button {
+  position: relative;
+  /* z-index: 2; */
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: white;
+  background-color: #191919;
+  border: 1px solid black;
+  /* display: inline-block; */
+  -webkit-box-shadow: -9px -6px 5px -5px rgba(84, 86, 88, 0.6);
+  -moz-box-shadow: -9px -6px 5px -5px rgba(84, 86, 88, 0.6);
+  box-shadow: -9px -6px 5px -5px rgba(84, 86, 88, 0.6);
+  transition: all ease-in-out 0.4s;
+}
+.calculator-controls-button:hover {
+  background-color: white;
+  color: #191919;
+  border-color: white;
+  cursor: pointer;
+}
+
+/* #1c1c1c */
+.calculator-controls-button-operations {
+}
+.calculator-controls-numbers {
+  
+}
+.calculator-controls-button-numbers {
+ 
+}
+.calculator-controls-button {
+}
+
+.calculator-controls-button-operations-c {
+  grid-area: c;
+}
+.calculator-controls-button-operations-prefix {
+  grid-area: plus-minus;
+}
+.calculator-controls-button-operations-percent {
+  grid-area: percent;
+}
+.calculator-controls-button-operations-devide {
+  grid-area: devision;
+}
+.calculator-controls-button-operations-multi {
+  grid-area: multi;  
+}
+.calculator-controls-button-operations-minus {
+  grid-area: minus;
+}
+.calculator-controls-button-operations-plus {
+  grid-area: plus;
+}
+.calculator-controls-button-operations-equal {
+  grid-area: equal;
+  background-color: #a160fb;
+}
+.calculator-controls-button-operations-dot {
+  grid-area: dot;
+}
+.calculator-controls-button-numbers-seven {
+  grid-area: seven;
+}
+.calculator-controls-button-numbers-eight {
+  grid-area: eight;
+}
+.calculator-controls-button-numbers-nine {
+  grid-area: nine;
+}
+.calculator-controls-button-numbers-four {
+  grid-area: four;
+}
+.calculator-controls-button-numbers-five {
+  grid-area: five;
+}
+.calculator-controls-button-numbers-six {
+  grid-area: six;
+}
+.calculator-controls-button-numbers-one {
+  grid-area: one;
+}
+.calculator-controls-button-numbers-two {
+  grid-area: two;
+}
+.calculator-controls-button-numbers-three {
+  grid-area: three;
+}
+.calculator-controls-button-numbers-zero {
+  grid-area: zero;
+  width: 100%;
+}
