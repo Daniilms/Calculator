@@ -41,43 +41,28 @@ function allClear() {
   expression.textContent = 0;
 }
 
-clearButton.addEventListener("click", () => {
-  allClear();
-});
+clearButton.addEventListener("click", allClear);
 
-/* mnemonic.addEventListener("click", function () {
-  firstStrInput += "-";
-  userInput.textContent = Number(firstStrInput);
-}); */
-
-function reset() {
-  firstStrInput = "";
-}
 function createStorage(evt) {
-  if (Number(storage[storage.length - 1]) !== NaN) {
-    storage.push(evt.target.textContent);
-  }
+  storage.push(evt.target.textContent);
   getStorage();
   console.log(storage);
 }
 function getStorage() {
   let singleElement = "";
-  storage.forEach((el) => {
-    singleElement += el;
-  });
-  if (storage.length <= 3) {
-    expression.textContent = singleElement;
+  if (firstStrInput !== "") {
+    storage.forEach((el) => {
+      singleElement += el;
+    });
+    if (storage.length <= 3) {
+      expression.textContent = singleElement;
+    }
   }
 }
-/* function preAnswer() {
-  storage.length >= 3 ? (userInput.textContent = atAll) : console.log("привет");
-} */
-
 // слушатель событий для кнопок с цифрами
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
-
     if (!_flag) {
       firstStrInput = firstStrInput + evt.target.textContent;
       userInput.textContent = Number(firstStrInput);
@@ -86,58 +71,28 @@ allNumsButtons.forEach((button) => {
       userInput.textContent = Number(secondStrInput);
     }
   });
-  /*  expression.textContent = firstStrInput + " " + action + " " + secondStrInput; */
 });
 
 // слушатель событий для кнопок с действиями
 allOperationsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
-    if (_flagForAction === false && !infinite) {
-      _flag = true;
-      _flagForAction = true;
-      action = evt.target.textContent;
-      console.log("Мы в if", firstStrInput, _flag, atAll);
-    } else {
-      allOperations();
-      firstStrInput = atAll;
-      console.log(atAll);
-      action = evt.target.textContent;
-      _flag = true;
-      _flagForAction = false;
-      console.log("Мы в else", typeof firstStrInput, _flag, atAll);
-    }
-  });
-  /*   console.log(firstStrInput, secondStrInput, atAll); */
-});
-/* allButtons.forEach((button) => {
-  button.addEventListener("click", function addNums(evt) {
-    const key = evt.target.textContent;
-
-    if (digits.includes(key)) {
-      if (secondStrInput === "" && action === "") {
-        firstStrInput += key;
-        userInput.textContent = firstStrInput;
-      } else {
-        secondStrInput += key;
-        userInput.textContent = secondStrInput;
-      }
-    }
     if (firstStrInput !== "") {
-      if (actions.includes(key)) {
-        action = key;
-        return;
+      if (_flagForAction === false && !infinite) {
+        _flag = true;
+        _flagForAction = true;
+        action = evt.target.textContent;
+      } else {
+        allOperations(evt);
+        firstStrInput = atAll;
+        action = evt.target.textContent;
+        _flag = true;
+        _flagForAction = false;
       }
     }
-    if (firstStrInput === "" && secondStrInput === "") {
-      userInput.textContent = 0;
-      expression.textContent = 0;
-    } else {
-      expression.textContent =
-        firstStrInput + " " + action + " " + secondStrInput;
-    }
   });
-}); */
+});
+
 function allOperations(evt) {
   let firstNumber = Number(firstStrInput);
   let secondNumber = Number(secondStrInput);
@@ -149,41 +104,37 @@ function allOperations(evt) {
       atAll = firstNumber - secondNumber;
       break;
     case "/":
-      if (secondNumber === 0) {
-        userInput.textContent = "Invalid";
-        return;
-      } else {
-        atAll = firstNumber / secondNumber;
-      }
+      atAll = firstNumber / secondNumber;
       break;
-    case "%":
-      atAll = firstNumber / 100;
     case "x":
       atAll = firstNumber * secondNumber;
       break;
+    default:
+      userInput.textContent = "Not working!";
   }
-  userInput.textContent =
-    parseFloat(atAll) % 1 === 0
-      ? parseFloat(atAll)
-      : Math.floor(atAll).toPrecision(4);
+  userInput.textContent = atAll;
+  if (firstStrInput !== "") {
+    if (storage.length > 3) {
+      let lastAction = storage[storage.length - 1];
+      infinite = true;
+      if (atAll !== 0) {
+        expression.textContent = atAll + lastAction;
+      } else {
+        expression.textContent = 0;
+      }
+      storage = [];
+    }
+  }
   secondStrInput = "";
-  if (storage.length > 3) {
-    infinite = true;
-  }
-  if (storage.length > 3) {
-    let lastAction = storage[storage.length - 1];
-
-    expression.textContent = atAll + lastAction + firstStrInput;
-    storage = [];
-  }
-  console.log("Была вызвана функция", atAll, firstStrInput, secondStrInput);
   return;
 }
 equalButton.addEventListener("click", () => {
-  /*  allOperations();
-  firstStrInput = atAll; */
-  /* firstStrInput = atAll; */
-  /* firstStrInput = "";
-  secondStrInput = ""; */
+  allOperations();
+  storage = [];
+  firstStrInput = atAll;
+  _flagForAction = false;
+  /*console.log(firstStrInput, secondStrInput); */
+  expression.textContent = atAll;
+  infinite = true;
+  console.log(_flag, _flagForAction, infinite);
 });
-/* equalButton.addEventListener("click", allOperations); */
