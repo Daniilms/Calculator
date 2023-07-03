@@ -1,5 +1,10 @@
 const allButtons = document.querySelectorAll(".calculator-controls-button");
-
+const allNumsButtons = document.querySelectorAll(
+  ".calculator-controls-button-numbers"
+);
+const allOperationsButtons = document.querySelectorAll(
+  ".calculator-controls-button-operations-main"
+);
 const userInput = document.querySelector(".calculator-user-input");
 const expression = document.querySelector(".calculator-user-input-operation");
 const clearButton = document.querySelector(
@@ -14,24 +19,20 @@ const mnemonic = document.querySelector(
 const actions = ["-", "+", "/", "x", "%"];
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
 
-let firstNum = "";
-let secondNum = "";
+let firstStrInput = "";
+let secondStrInput = "";
 let action = "";
 let _flag = false;
-let _secondFlag = false;
+let _flagForAction = false;
 let atAll = 0;
-let done = true;
-const storage = [];
-
-userInput.textContent = 0;
-expression.textContent = 0;
+let storage = [];
 
 function allClear() {
-  firstNum = "";
-  secondNum = "";
+  firstStrInput = "";
+  secondStrInput = "";
   action = "";
   _flag = false;
-  _secondFlag = false;
+  storage = [];
   userInput.textContent = 0;
   expression.textContent = 0;
 }
@@ -41,72 +42,123 @@ clearButton.addEventListener("click", () => {
 });
 
 mnemonic.addEventListener("click", function () {
-  firstNum += "-";
-  userInput.textContent = firstNum;
+  firstStrInput += "-";
+  userInput.textContent = firstStrInput;
 });
 
 function reset() {
-  secondNum = "";
+  firstStrInput = "";
 }
-allButtons.forEach((button) => {
+function createStorage(evt) {
+  storage.push(evt.target.textContent);
+  getStorage();
+  console.log(storage);
+}
+function getStorage() {
+  let some = "";
+  storage.forEach((el) => {
+    some += el;
+  });
+  expression.textContent = some;
+}
+
+allNumsButtons.forEach((button) => {
+  button.addEventListener("click", function (evt) {
+    createStorage(evt);
+    if (_flag === false) {
+      firstStrInput = firstStrInput + evt.target.textContent;
+      userInput.textContent = firstStrInput;
+    } else {
+      secondStrInput += evt.target.textContent;
+      userInput.textContent = secondStrInput;
+    }
+  });
+  /*  expression.textContent = firstStrInput + " " + action + " " + secondStrInput; */
+});
+
+allOperationsButtons.forEach((button) => {
+  button.addEventListener("click", function (evt) {
+    createStorage(evt);
+    if (_flagForAction === false) {
+      _flag = true;
+      _flagForAction = true;
+      action = evt.target.textContent;
+      console.log("Попали сюда", _flagForAction, firstStrInput, secondStrInput);
+    } else {
+      allOperations();
+      reset();
+      _flag = false;
+      _flagForAction = false;
+      console.log(
+        "Попали в else",
+        _flagForAction,
+        firstStrInput,
+        secondStrInput
+      );
+    }
+  });
+});
+/* allButtons.forEach((button) => {
   button.addEventListener("click", function addNums(evt) {
     const key = evt.target.textContent;
 
     if (digits.includes(key)) {
-      if (secondNum === "" && action === "") {
-        firstNum += key;
-        userInput.textContent = firstNum;
+      if (secondStrInput === "" && action === "") {
+        firstStrInput += key;
+        userInput.textContent = firstStrInput;
       } else {
-        secondNum += key;
-        userInput.textContent = secondNum;
+        secondStrInput += key;
+        userInput.textContent = secondStrInput;
       }
     }
-    if (firstNum !== "") {
+    if (firstStrInput !== "") {
       if (actions.includes(key)) {
         action = key;
         return;
       }
     }
-    if (firstNum === "" && secondNum === "") {
+    if (firstStrInput === "" && secondStrInput === "") {
       userInput.textContent = 0;
       expression.textContent = 0;
     } else {
-      expression.textContent = firstNum + " " + action + " " + secondNum;
+      expression.textContent =
+        firstStrInput + " " + action + " " + secondStrInput;
     }
   });
-});
+}); */
 function allOperations() {
-  let firstNumber = Number(firstNum);
-  let secondNumber = Number(secondNum);
+  let firstNumber = Number(firstStrInput);
+  let secondNumber = Number(secondStrInput);
 
   switch (action) {
     case "+":
-      firstNum = firstNumber + secondNumber;
+      atAll = firstNumber + secondNumber;
       break;
     case "-":
-      firstNum = firstNumber - secondNumber;
+      atAll = firstNumber - secondNumber;
       break;
     case "/":
       if (secondNumber === 0) {
         userInput.textContent = "Invalid";
         return;
       } else {
-        firstNum = firstNumber / secondNumber;
+        atAll = firstNumber / secondNumber;
       }
       break;
     case "%":
-      firstNum = firstNumber % secondNumber;
+      atAll = firstNumber / 100;
     case "x":
-      firstNum = firstNumber * secondNumber;
+      atAll = firstNumber * secondNumber;
       break;
   }
   userInput.textContent =
-    parseFloat(firstNum) % 1 === 0
-      ? parseFloat(firstNum)
-      : parseFloat(firstNum).toPrecision(2);
-  secondNum = "";
-  done = true;
+    parseFloat(atAll) % 1 === 0
+      ? parseFloat(atAll)
+      : Math.floor(atAll).toPrecision(4);
+  secondStrInput = "";
+
+  console.log("Была вызвана функция");
   return;
 }
 
-equalButton.addEventListener("click", allOperations);
+/* equalButton.addEventListener("click", allOperations); */
