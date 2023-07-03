@@ -26,13 +26,17 @@ let _flag = false;
 let _flagForAction = false;
 let atAll = 0;
 let storage = [];
+let isStorageEmpty = true;
+let infinite = false;
 
 function allClear() {
   firstStrInput = "";
   secondStrInput = "";
   action = "";
   _flag = false;
+  atAll = 0;
   storage = [];
+  infinite = false;
   userInput.textContent = 0;
   expression.textContent = 0;
 }
@@ -41,62 +45,70 @@ clearButton.addEventListener("click", () => {
   allClear();
 });
 
-mnemonic.addEventListener("click", function () {
+/* mnemonic.addEventListener("click", function () {
   firstStrInput += "-";
-  userInput.textContent = firstStrInput;
-});
+  userInput.textContent = Number(firstStrInput);
+}); */
 
 function reset() {
   firstStrInput = "";
 }
 function createStorage(evt) {
-  storage.push(evt.target.textContent);
+  if (Number(storage[storage.length - 1]) !== NaN) {
+    storage.push(evt.target.textContent);
+  }
   getStorage();
   console.log(storage);
 }
 function getStorage() {
-  let some = "";
+  let singleElement = "";
   storage.forEach((el) => {
-    some += el;
+    singleElement += el;
   });
-  expression.textContent = some;
+  if (storage.length <= 3) {
+    expression.textContent = singleElement;
+  }
 }
+/* function preAnswer() {
+  storage.length >= 3 ? (userInput.textContent = atAll) : console.log("привет");
+} */
 
+// слушатель событий для кнопок с цифрами
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
-    if (_flag === false) {
+
+    if (!_flag) {
       firstStrInput = firstStrInput + evt.target.textContent;
-      userInput.textContent = firstStrInput;
+      userInput.textContent = Number(firstStrInput);
     } else {
       secondStrInput += evt.target.textContent;
-      userInput.textContent = secondStrInput;
+      userInput.textContent = Number(secondStrInput);
     }
   });
   /*  expression.textContent = firstStrInput + " " + action + " " + secondStrInput; */
 });
 
+// слушатель событий для кнопок с действиями
 allOperationsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
-    if (_flagForAction === false) {
+    if (_flagForAction === false && !infinite) {
       _flag = true;
       _flagForAction = true;
       action = evt.target.textContent;
-      console.log("Попали сюда", _flagForAction, firstStrInput, secondStrInput);
+      console.log("Мы в if", firstStrInput, _flag, atAll);
     } else {
       allOperations();
-      reset();
-      _flag = false;
+      firstStrInput = atAll;
+      console.log(atAll);
+      action = evt.target.textContent;
+      _flag = true;
       _flagForAction = false;
-      console.log(
-        "Попали в else",
-        _flagForAction,
-        firstStrInput,
-        secondStrInput
-      );
+      console.log("Мы в else", typeof firstStrInput, _flag, atAll);
     }
   });
+  /*   console.log(firstStrInput, secondStrInput, atAll); */
 });
 /* allButtons.forEach((button) => {
   button.addEventListener("click", function addNums(evt) {
@@ -126,10 +138,9 @@ allOperationsButtons.forEach((button) => {
     }
   });
 }); */
-function allOperations() {
+function allOperations(evt) {
   let firstNumber = Number(firstStrInput);
   let secondNumber = Number(secondStrInput);
-
   switch (action) {
     case "+":
       atAll = firstNumber + secondNumber;
@@ -156,9 +167,23 @@ function allOperations() {
       ? parseFloat(atAll)
       : Math.floor(atAll).toPrecision(4);
   secondStrInput = "";
+  if (storage.length > 3) {
+    infinite = true;
+  }
+  if (storage.length > 3) {
+    let lastAction = storage[storage.length - 1];
 
-  console.log("Была вызвана функция");
+    expression.textContent = atAll + lastAction + firstStrInput;
+    storage = [];
+  }
+  console.log("Была вызвана функция", atAll, firstStrInput, secondStrInput);
   return;
 }
-
+equalButton.addEventListener("click", () => {
+  /*  allOperations();
+  firstStrInput = atAll; */
+  /* firstStrInput = atAll; */
+  /* firstStrInput = "";
+  secondStrInput = ""; */
+});
 /* equalButton.addEventListener("click", allOperations); */
