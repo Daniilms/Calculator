@@ -27,6 +27,7 @@ let _flagForAction = false;
 let atAll = 0;
 let storage = [];
 let isStorageEmpty = true;
+let isMnemonic = false;
 let infinite = false;
 
 function allClear() {
@@ -40,9 +41,27 @@ function allClear() {
   userInput.textContent = 0;
   expression.textContent = 0;
 }
-
+userInput.textContent = 0;
 clearButton.addEventListener("click", allClear);
 
+mnemonic.addEventListener("click", getMnemonic);
+
+function getMnemonic() {
+  if (firstStrInput === "" || secondStrInput === "") {
+    userInput.textContent = "-" + 0;
+    isMnemonic = true;
+  } else {
+    if (!_flag) {
+      firstStrInput = "-" + firstStrInput;
+      userInput.textContent = Number(firstStrInput);
+    } else {
+      secondStrInput = "-" + secondStrInput;
+      userInput.textContent = Number(secondStrInput);
+    }
+  }
+
+  console.log(firstStrInput);
+}
 function createStorage(evt) {
   storage.push(evt.target.textContent);
   getStorage();
@@ -59,16 +78,29 @@ function getStorage() {
     }
   }
 }
+
 // слушатель событий для кнопок с цифрами
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
     if (!_flag) {
-      firstStrInput = firstStrInput + evt.target.textContent;
-      userInput.textContent = Number(firstStrInput);
+      if (isMnemonic) {
+        firstStrInput = "-" + firstStrInput + evt.target.textContent;
+        userInput.textContent = Number(firstStrInput);
+        isMnemonic = false;
+      } else {
+        firstStrInput = firstStrInput + evt.target.textContent;
+        userInput.textContent = Number(firstStrInput);
+      }
     } else {
-      secondStrInput += evt.target.textContent;
-      userInput.textContent = Number(secondStrInput);
+      if (isMnemonic) {
+        secondStrInput = "-" + secondStrInput + evt.target.textContent;
+        userInput.textContent = Number(secondStrInput);
+        isMnemonic = false;
+      } else {
+        secondStrInput += evt.target.textContent;
+        userInput.textContent = Number(secondStrInput);
+      }
     }
   });
 });
