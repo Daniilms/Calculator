@@ -1,9 +1,13 @@
 const allButtons = document.querySelectorAll(".calculator-controls-button");
+
 const allNumsButtons = document.querySelectorAll(
   ".calculator-controls-button-numbers"
 );
 const allOperationsButtons = document.querySelectorAll(
   ".calculator-controls-button-operations-main"
+);
+const dotButton = document.querySelector(
+  ".calculator-controls-button-operations-dot"
 );
 const userInput = document.querySelector(".calculator-user-input");
 const expression = document.querySelector(".calculator-user-input-operation");
@@ -13,14 +17,12 @@ const clearButton = document.querySelector(
 const equalButton = document.querySelector(
   ".calculator-controls-button-operations-equal"
 );
-const mnemonic = document.querySelector(
+const negativeButton = document.querySelector(
   ".calculator-controls-button-operations-prefix"
 );
 const percentButton = document.querySelector(
   ".calculator-controls-button-operations-percent"
 );
-const actions = ["-", "+", "/", "x", "%"];
-const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
 
 let firstStrInput = "";
 let secondStrInput = "";
@@ -33,6 +35,9 @@ let isStorageEmpty = true;
 let isMnemonic = false;
 let infinite = false;
 
+userInput.textContent = Number(0);
+
+// логика кнопки AC
 function allClear() {
   firstStrInput = "";
   secondStrInput = "";
@@ -44,12 +49,32 @@ function allClear() {
   userInput.textContent = 0;
   expression.textContent = 0;
 }
-userInput.textContent = 0;
-clearButton.addEventListener("click", allClear);
 
-mnemonic.addEventListener("click", getMnemonic);
-percentButton.addEventListener("click", getPercent);
+// логика кнопки '.'
+function getDot() {
+  if (firstStrInput === "") {
+    if (!_flag) {
+      firstStrInput = "0." + firstStrInput;
+      userInput.textContent = firstStrInput;
+    } else {
+      secondStrInput = "0." + secondStrInput;
+      userInput.textContent = secondStrInput;
+    }
+    expression.textContent = userInput.textContent;
+  } else {
+    if (!_flag) {
+      firstStrInput = firstStrInput + ".";
+      userInput.textContent = firstStrInput;
+    } else {
+      secondStrInput = secondStrInput + ".";
+      userInput.textContent = secondStrInput;
+    }
+    expression.textContent = userInput.textContent;
+  }
 
+  changeFontSize();
+}
+// логика кнопки процента
 function getPercent() {
   if (!_flag) {
     firstStrInput = Number(firstStrInput / 100);
@@ -58,9 +83,12 @@ function getPercent() {
     secondStrInput = Number(secondStrInput / 100);
     userInput.textContent = secondStrInput;
   }
+  expression.textContent = userInput.textContent;
   changeFontSize();
 }
-function getMnemonic() {
+
+// логика кнопки +/-
+function getNegative() {
   if (firstStrInput === "") {
     userInput.textContent = 0;
   } else {
@@ -73,11 +101,14 @@ function getMnemonic() {
     }
   }
 }
-function createStorage(evt) {
+
+// функция наполнения хранилища для выражения
+function fillStorage(evt) {
   storage.push(evt.target.textContent);
   getStorage();
-  console.log(storage);
 }
+
+// функция перебора и вывода хранилища выражения
 function getStorage() {
   let singleElement = "";
   if (firstStrInput !== "") {
@@ -89,56 +120,16 @@ function getStorage() {
     }
   }
 }
+// изменение размера шрифта при достижении определенной длины вывода.
+function changeFontSize() {
+  if (userInput.textContent.length >= 7) {
+    userInput.classList.add("calculator-user-input-mini");
+  } else {
+    userInput.classList.remove("calculator-user-input-mini");
+  }
+}
 
-// слушатель событий для кнопок с цифрами
-allNumsButtons.forEach((button) => {
-  button.addEventListener("click", function (evt) {
-    createStorage(evt);
-    changeFontSize();
-    if (!_flag) {
-      if (isMnemonic) {
-        firstStrInput = "-" + firstStrInput + evt.target.textContent;
-        userInput.textContent = Number(firstStrInput);
-        isMnemonic = false;
-      } else {
-        firstStrInput = firstStrInput + evt.target.textContent;
-        userInput.textContent = Number(firstStrInput);
-      }
-    } else {
-      if (isMnemonic) {
-        secondStrInput = "-" + secondStrInput + evt.target.textContent;
-        userInput.textContent = Number(secondStrInput);
-        isMnemonic = false;
-      } else {
-        secondStrInput += evt.target.textContent;
-        userInput.textContent = Number(secondStrInput);
-      }
-    }
-  });
-});
-
-// слушатель событий для кнопок с действиями
-allOperationsButtons.forEach((button) => {
-  button.addEventListener("click", function (evt) {
-    createStorage(evt);
-    changeFontSize();
-    console.log(firstStrInput);
-    if (firstStrInput !== "" || firstStrInput !== 0) {
-      if (_flagForAction === false && !infinite) {
-        _flag = true;
-        _flagForAction = true;
-        action = evt.target.textContent;
-      } else {
-        allOperations(evt);
-        firstStrInput = atAll;
-        action = evt.target.textContent;
-        _flag = true;
-        _flagForAction = false;
-      }
-    }
-  });
-});
-
+// логика всех основных (main) операций
 function allOperations() {
   let firstNumber = Number(firstStrInput);
   let secondNumber = Number(secondStrInput);
@@ -176,20 +167,56 @@ function allOperations() {
   secondStrInput = "";
   return;
 }
+
+// слушатель событий для кнопок с цифрами
+allNumsButtons.forEach((button) => {
+  button.addEventListener("click", function (evt) {
+    fillStorage(evt);
+    changeFontSize();
+
+    if (!_flag) {
+      firstStrInput = firstStrInput + evt.target.textContent;
+      userInput.textContent = Number(firstStrInput);
+    } else {
+      secondStrInput = secondStrInput + evt.target.textContent;
+      userInput.textContent = Number(secondStrInput);
+    }
+  });
+});
+
+// слушатель событий для кнопок с действиями
+allOperationsButtons.forEach((button) => {
+  button.addEventListener("click", function (evt) {
+    fillStorage(evt);
+    changeFontSize();
+
+    if (firstStrInput !== "" && firstStrInput !== 0) {
+      if (_flagForAction === false && !infinite) {
+        _flag = true;
+        _flagForAction = true;
+        action = evt.target.textContent;
+      } else {
+        allOperations(evt);
+        firstStrInput = atAll;
+        action = evt.target.textContent;
+        _flag = true;
+        _flagForAction = false;
+      }
+    }
+  });
+});
+
+// нажатие кнопки "равно"
 equalButton.addEventListener("click", () => {
-  changeFontSize();
   allOperations();
   storage = [];
   firstStrInput = atAll;
   _flagForAction = false;
   expression.textContent = atAll;
-  infinite = true;
+  /* infinite = true; */
 });
 
-function changeFontSize() {
-  if (userInput.textContent.length >= 10) {
-    userInput.classList.add("calculator-user-input-mini");
-  } else {
-    userInput.classList.remove("calculator-user-input-mini");
-  }
-}
+clearButton.addEventListener("click", allClear);
+negativeButton.addEventListener("click", getNegative);
+percentButton.addEventListener("click", getPercent);
+dotButton.addEventListener("click", getDot);
