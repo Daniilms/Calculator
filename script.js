@@ -16,6 +16,9 @@ const equalButton = document.querySelector(
 const mnemonic = document.querySelector(
   ".calculator-controls-button-operations-prefix"
 );
+const percentButton = document.querySelector(
+  ".calculator-controls-button-operations-percent"
+);
 const actions = ["-", "+", "/", "x", "%"];
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."];
 
@@ -45,22 +48,30 @@ userInput.textContent = 0;
 clearButton.addEventListener("click", allClear);
 
 mnemonic.addEventListener("click", getMnemonic);
+percentButton.addEventListener("click", getPercent);
 
+function getPercent() {
+  if (!_flag) {
+    firstStrInput = Number(firstStrInput / 100);
+    userInput.textContent = firstStrInput;
+  } else {
+    secondStrInput = Number(secondStrInput / 100);
+    userInput.textContent = secondStrInput;
+  }
+  changeFontSize();
+}
 function getMnemonic() {
-  if (firstStrInput === "" || secondStrInput === "") {
-    userInput.textContent = "-" + 0;
-    isMnemonic = true;
+  if (firstStrInput === "") {
+    userInput.textContent = 0;
   } else {
     if (!_flag) {
-      firstStrInput = "-" + firstStrInput;
+      firstStrInput = -1 * firstStrInput;
       userInput.textContent = Number(firstStrInput);
     } else {
-      secondStrInput = "-" + secondStrInput;
+      secondStrInput = -1 * secondStrInput;
       userInput.textContent = Number(secondStrInput);
     }
   }
-
-  console.log(firstStrInput);
 }
 function createStorage(evt) {
   storage.push(evt.target.textContent);
@@ -83,6 +94,7 @@ function getStorage() {
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
+    changeFontSize();
     if (!_flag) {
       if (isMnemonic) {
         firstStrInput = "-" + firstStrInput + evt.target.textContent;
@@ -109,7 +121,9 @@ allNumsButtons.forEach((button) => {
 allOperationsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
     createStorage(evt);
-    if (firstStrInput !== "") {
+    changeFontSize();
+    console.log(firstStrInput);
+    if (firstStrInput !== "" || firstStrInput !== 0) {
       if (_flagForAction === false && !infinite) {
         _flag = true;
         _flagForAction = true;
@@ -125,7 +139,7 @@ allOperationsButtons.forEach((button) => {
   });
 });
 
-function allOperations(evt) {
+function allOperations() {
   let firstNumber = Number(firstStrInput);
   let secondNumber = Number(secondStrInput);
   switch (action) {
@@ -145,6 +159,7 @@ function allOperations(evt) {
       userInput.textContent = "Not working!";
   }
   userInput.textContent = atAll;
+
   if (firstStrInput !== "") {
     if (storage.length > 3) {
       let lastAction = storage[storage.length - 1];
@@ -157,16 +172,24 @@ function allOperations(evt) {
       storage = [];
     }
   }
+  changeFontSize();
   secondStrInput = "";
   return;
 }
 equalButton.addEventListener("click", () => {
+  changeFontSize();
   allOperations();
   storage = [];
   firstStrInput = atAll;
   _flagForAction = false;
-  /*console.log(firstStrInput, secondStrInput); */
   expression.textContent = atAll;
   infinite = true;
-  console.log(_flag, _flagForAction, infinite);
 });
+
+function changeFontSize() {
+  if (userInput.textContent.length >= 10) {
+    userInput.classList.add("calculator-user-input-mini");
+  } else {
+    userInput.classList.remove("calculator-user-input-mini");
+  }
+}

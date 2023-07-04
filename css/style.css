@@ -26,7 +26,7 @@ p {
   border: 2px solid black;
   border-radius: 10px;
   background-color: #191919;
-
+  
 }
 .calculator-window {
   position: relative;
@@ -53,6 +53,12 @@ p {
   font-size: 30px;
   font-weight: 700;
   color: white;
+  /* overflow: hidden; */
+  max-width: 100%;
+  margin: 0 0 0 0;
+}
+.calculator-user-input-mini {
+  font-size: 15px;
 }
 .calculator-user-input-operation {
   font-size: 15px;
