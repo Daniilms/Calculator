@@ -213,7 +213,6 @@ equalButton.addEventListener("click", () => {
   firstStrInput = atAll;
   _flagForAction = false;
   expression.textContent = atAll;
-  /* infinite = true; */
 });
 
 clearButton.addEventListener("click", allClear);
