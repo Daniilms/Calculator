@@ -14,7 +14,7 @@ You can try calulator online at: https://daniilms.github.io/Calculator/ .
 
 ## Running localy
 
-### Live server extansion
+### Live server extension
 
 1. 'git clone' the repository
 2. Use 'Live Server' Extension in VS Code
