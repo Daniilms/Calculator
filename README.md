@@ -26,7 +26,7 @@ You can try calulator online at: https://daniilms.github.io/Calculator/ .
 3. Write a command in the console 'http-server' (this one starts your local server).
 4. Now 'calculator' is available by the addresses written in the your console.
 
-## How to use ?
+## How to use 
 
 Like a regular calculator.
 
