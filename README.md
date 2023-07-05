@@ -10,6 +10,8 @@ The application is still under development, I plan to refine it further.
 
 ## Live version
 
+You can try calulator online at: https://daniilms.github.io/Calculator/ .
+
 ## Running localy
 
 ### Live server extansion
