@@ -9,6 +9,12 @@
   }
 }
 @media (max-width: 899px) {
+  /* .calculator-user-input {
+    max-width: 100%;
+  } */
+  .calculator-user-input-mini {
+    font-size: 10px;
+  }
   .calculator-controls-button {
     width: 33px;
     height: 32px;
@@ -35,6 +41,12 @@
   .calculator-controls-button-numbers-zero {
     width: 100%;
     height: 25px;
+  }
+  .calculator-user-input {
+    font-size: 12px;
+  }
+  .calculator-user-input-mini {
+    font-size: 8px;
   }
 }
 @media (max-width: 630px) {
