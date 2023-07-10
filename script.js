@@ -32,11 +32,34 @@ let _isSecondNumberInput = false;
 let atAll = 0;
 //let storage = [];
 // let isStorageEmpty = true;
-let isMnemonic = false;
 // let infinite = false;
 
 userInput.textContent = Number(0);
 
+function validate() {
+  if (action == "/" && secondStrInput == "") {
+    setTimeout(() => {
+      userInput.textContent = 0;
+      expression.textContent = 0;
+      atAll = 0;
+      firstStrInput = ``;
+      secondStrInput = ``;
+      _isSecondNumberInput = false;
+      action = "";
+    }, 2000);
+  }
+  if (secondStrInput === "0") {
+    setTimeout(() => {
+      userInput.textContent = 0;
+      expression.textContent = 0;
+      atAll = 0;
+      firstStrInput = ``;
+      secondStrInput = ``;
+      _isSecondNumberInput = false;
+      action = "";
+    }, 2000);
+  }
+}
 // логика кнопки AC
 function allClear() {
   firstStrInput = "";
@@ -44,19 +67,21 @@ function allClear() {
   action = "";
   _isSecondNumberInput = false;
   atAll = 0;
-  //storage = [];
-  // infinite = false;
   userInput.textContent = 0;
   expression.textContent = makeExpression();
 }
 
 function makeExpression() {
-  return firstStrInput + action + secondStrInput;
+  if (firstStrInput !== "") {
+    return firstStrInput + action + secondStrInput;
+  } else {
+    return 0;
+  }
 }
 
 // логика кнопки '.'
 function getDot() {
-  if (firstStrInput === "") {
+  if (firstStrInput === "" || secondStrInput === "") {
     if (!_isSecondNumberInput) {
       firstStrInput = "0." + firstStrInput;
       userInput.textContent = firstStrInput;
@@ -138,6 +163,7 @@ function changeFontSize() {
 function allOperations() {
   let firstNumber = Number(firstStrInput);
   let secondNumber = Number(secondStrInput);
+
   switch (action) {
     case "+":
       atAll = firstNumber + secondNumber;
@@ -146,7 +172,11 @@ function allOperations() {
       atAll = firstNumber - secondNumber;
       break;
     case "/":
-      atAll = firstNumber / secondNumber;
+      secondStrInput !== "" && secondStrInput !== "0"
+        ? (atAll = firstNumber / secondNumber)
+        : validate();
+
+      console.log("А мы здесь");
       break;
     case "x":
       atAll = firstNumber * secondNumber;
@@ -156,7 +186,7 @@ function allOperations() {
   }
   userInput.textContent = atAll;
 
-  if (firstStrInput !== "") {
+  /* if (firstStrInput !== "") {
     if (storage.length > 3) {
       let lastAction = storage[storage.length - 1];
       //infinite = true;
@@ -167,7 +197,7 @@ function allOperations() {
       }
       storage = [];
     }
-  }
+  } */
   changeFontSize();
   secondStrInput = "";
   return;
@@ -176,20 +206,11 @@ function allOperations() {
 // слушатель событий для кнопок с цифрами
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
-    //fillStorage(evt);
     changeFontSize();
-
-
     if (!_isSecondNumberInput) {
-      if (firstStrInput == 0) {
-        firstStrInput = '';
-      }
       firstStrInput = firstStrInput + evt.target.textContent;
       userInput.textContent = Number(firstStrInput);
     } else {
-      if (secondStrInput == 0) {
-        secondStrInput = '';
-      }
       secondStrInput = secondStrInput + evt.target.textContent;
       userInput.textContent = Number(secondStrInput);
     }
@@ -200,11 +221,10 @@ allNumsButtons.forEach((button) => {
 // слушатель событий для кнопок с действиями
 allOperationsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
-    //fillStorage(evt);
     changeFontSize();
-
+    validate();
     if (firstStrInput !== "" && firstStrInput !== 0) {
-      if (action === '') {
+      if (action === "") {
         _isSecondNumberInput = true;
         // _isSecondNumberInputForAction = true;
         action = evt.target.textContent;
@@ -225,11 +245,19 @@ equalButton.addEventListener("click", () => {
   allOperations();
   //storage = [];
   firstStrInput = atAll;
-  action = '';
+  action = "";
   // _isSecondNumberInputForAction = false;
   expression.textContent = makeExpression();
 });
 
+let body = document.querySelector("body");
+let demoBtn = document.createElement("button");
+demoBtn.textContent = "Button";
+body.append(demoBtn);
+
+demoBtn.addEventListener("click", () => {
+  console.log(firstStrInput, secondStrInput, action);
+});
 clearButton.addEventListener("click", allClear);
 negativeButton.addEventListener("click", getNegative);
 percentButton.addEventListener("click", getPercent);
