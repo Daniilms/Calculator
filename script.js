@@ -27,13 +27,13 @@ const percentButton = document.querySelector(
 let firstStrInput = "";
 let secondStrInput = "";
 let action = "";
-let _flag = false;
-let _flagForAction = false;
+let _isSecondNumberInput = false;
+// let _isSecondNumberInputForAction = false;
 let atAll = 0;
-let storage = [];
-let isStorageEmpty = true;
+//let storage = [];
+// let isStorageEmpty = true;
 let isMnemonic = false;
-let infinite = false;
+// let infinite = false;
 
 userInput.textContent = Number(0);
 
@@ -42,48 +42,52 @@ function allClear() {
   firstStrInput = "";
   secondStrInput = "";
   action = "";
-  _flag = false;
+  _isSecondNumberInput = false;
   atAll = 0;
-  storage = [];
-  infinite = false;
+  //storage = [];
+  // infinite = false;
   userInput.textContent = 0;
-  expression.textContent = 0;
+  expression.textContent = makeExpression();
+}
+
+function makeExpression() {
+  return firstStrInput + action + secondStrInput;
 }
 
 // логика кнопки '.'
 function getDot() {
   if (firstStrInput === "") {
-    if (!_flag) {
+    if (!_isSecondNumberInput) {
       firstStrInput = "0." + firstStrInput;
       userInput.textContent = firstStrInput;
     } else {
       secondStrInput = "0." + secondStrInput;
       userInput.textContent = secondStrInput;
     }
-    expression.textContent = userInput.textContent;
+    expression.textContent = makeExpression();
   } else {
-    if (!_flag) {
+    if (!_isSecondNumberInput) {
       firstStrInput = firstStrInput + ".";
       userInput.textContent = firstStrInput;
     } else {
       secondStrInput = secondStrInput + ".";
       userInput.textContent = secondStrInput;
     }
-    expression.textContent = userInput.textContent;
+    expression.textContent = makeExpression();
   }
 
   changeFontSize();
 }
 // логика кнопки процента
 function getPercent() {
-  if (!_flag) {
+  if (!_isSecondNumberInput) {
     firstStrInput = Number(firstStrInput / 100);
     userInput.textContent = firstStrInput;
   } else {
     secondStrInput = Number(secondStrInput / 100);
     userInput.textContent = secondStrInput;
   }
-  expression.textContent = userInput.textContent;
+  expression.textContent = makeExpression();
   changeFontSize();
 }
 
@@ -92,7 +96,7 @@ function getNegative() {
   if (firstStrInput === "") {
     userInput.textContent = 0;
   } else {
-    if (!_flag) {
+    if (!_isSecondNumberInput) {
       firstStrInput = -1 * firstStrInput;
       userInput.textContent = Number(firstStrInput);
     } else {
@@ -103,23 +107,24 @@ function getNegative() {
 }
 
 // функция наполнения хранилища для выражения
-function fillStorage(evt) {
-  storage.push(evt.target.textContent);
-  getStorage();
-}
+// function fillStorage(evt) {
+//   storage.push(evt.target.textContent);
+//   getStorage();
+// }
 
 // функция перебора и вывода хранилища выражения
-function getStorage() {
-  let singleElement = "";
-  if (firstStrInput !== "") {
-    storage.forEach((el) => {
-      singleElement += el;
-    });
-    if (storage.length <= 3) {
-      expression.textContent = singleElement;
-    }
-  }
-}
+// function getStorage() {
+//   let singleElement = "";
+//   if (firstStrInput !== "") {
+//     storage.forEach((el) => {
+//       singleElement += el;
+//     });
+//     if (storage.length <= 3) {
+//       expression.textContent = makeExpression();
+//     }
+//   }
+// }
+
 // изменение размера шрифта при достижении определенной длины вывода.
 function changeFontSize() {
   if (userInput.textContent.length >= 7) {
@@ -154,11 +159,11 @@ function allOperations() {
   if (firstStrInput !== "") {
     if (storage.length > 3) {
       let lastAction = storage[storage.length - 1];
-      infinite = true;
+      //infinite = true;
       if (atAll !== 0) {
-        expression.textContent = atAll + lastAction;
+        expression.textContent = makeExpression();
       } else {
-        expression.textContent = 0;
+        expression.textContent = makeExpression();
       }
       storage = [];
     }
@@ -171,48 +176,58 @@ function allOperations() {
 // слушатель событий для кнопок с цифрами
 allNumsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
-    fillStorage(evt);
+    //fillStorage(evt);
     changeFontSize();
 
-    if (!_flag) {
+
+    if (!_isSecondNumberInput) {
+      if (firstStrInput == 0) {
+        firstStrInput = '';
+      }
       firstStrInput = firstStrInput + evt.target.textContent;
       userInput.textContent = Number(firstStrInput);
     } else {
+      if (secondStrInput == 0) {
+        secondStrInput = '';
+      }
       secondStrInput = secondStrInput + evt.target.textContent;
       userInput.textContent = Number(secondStrInput);
     }
+    expression.textContent = makeExpression();
   });
 });
 
 // слушатель событий для кнопок с действиями
 allOperationsButtons.forEach((button) => {
   button.addEventListener("click", function (evt) {
-    fillStorage(evt);
+    //fillStorage(evt);
     changeFontSize();
 
     if (firstStrInput !== "" && firstStrInput !== 0) {
-      if (_flagForAction === false && !infinite) {
-        _flag = true;
-        _flagForAction = true;
+      if (action === '') {
+        _isSecondNumberInput = true;
+        // _isSecondNumberInputForAction = true;
         action = evt.target.textContent;
       } else {
         allOperations(evt);
         firstStrInput = atAll;
         action = evt.target.textContent;
-        _flag = true;
-        _flagForAction = false;
+        _isSecondNumberInput = true;
+        // _isSecondNumberInputForAction = false;
       }
     }
+    expression.textContent = makeExpression();
   });
 });
 
 // нажатие кнопки "равно"
 equalButton.addEventListener("click", () => {
   allOperations();
-  storage = [];
+  //storage = [];
   firstStrInput = atAll;
-  _flagForAction = false;
-  expression.textContent = atAll;
+  action = '';
+  // _isSecondNumberInputForAction = false;
+  expression.textContent = makeExpression();
 });
 
 clearButton.addEventListener("click", allClear);
