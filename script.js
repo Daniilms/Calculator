@@ -28,11 +28,7 @@ let firstStrInput = "";
 let secondStrInput = "";
 let action = "";
 let _isSecondNumberInput = false;
-// let _isSecondNumberInputForAction = false;
 let atAll = 0;
-//let storage = [];
-// let isStorageEmpty = true;
-// let infinite = false;
 
 userInput.textContent = Number(0);
 
@@ -131,25 +127,6 @@ function getNegative() {
   }
 }
 
-// функция наполнения хранилища для выражения
-// function fillStorage(evt) {
-//   storage.push(evt.target.textContent);
-//   getStorage();
-// }
-
-// функция перебора и вывода хранилища выражения
-// function getStorage() {
-//   let singleElement = "";
-//   if (firstStrInput !== "") {
-//     storage.forEach((el) => {
-//       singleElement += el;
-//     });
-//     if (storage.length <= 3) {
-//       expression.textContent = makeExpression();
-//     }
-//   }
-// }
-
 // изменение размера шрифта при достижении определенной длины вывода.
 function changeFontSize() {
   if (userInput.textContent.length >= 7) {
@@ -186,18 +163,6 @@ function allOperations() {
   }
   userInput.textContent = atAll;
 
-  /* if (firstStrInput !== "") {
-    if (storage.length > 3) {
-      let lastAction = storage[storage.length - 1];
-      //infinite = true;
-      if (atAll !== 0) {
-        expression.textContent = makeExpression();
-      } else {
-        expression.textContent = makeExpression();
-      }
-      storage = [];
-    }
-  } */
   changeFontSize();
   secondStrInput = "";
   return;
@@ -226,14 +191,12 @@ allOperationsButtons.forEach((button) => {
     if (firstStrInput !== "" && firstStrInput !== 0) {
       if (action === "") {
         _isSecondNumberInput = true;
-        // _isSecondNumberInputForAction = true;
         action = evt.target.textContent;
       } else {
         allOperations(evt);
         firstStrInput = atAll;
         action = evt.target.textContent;
         _isSecondNumberInput = true;
-        // _isSecondNumberInputForAction = false;
       }
     }
     expression.textContent = makeExpression();
@@ -243,10 +206,8 @@ allOperationsButtons.forEach((button) => {
 // нажатие кнопки "равно"
 equalButton.addEventListener("click", () => {
   allOperations();
-  //storage = [];
   firstStrInput = atAll;
   action = "";
-  // _isSecondNumberInputForAction = false;
   expression.textContent = makeExpression();
 });
 
