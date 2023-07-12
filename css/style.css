@@ -53,7 +53,7 @@ p {
   font-size: 30px;
   font-weight: 700;
   color: white;
-  /* overflow: hidden; */
+  overflow: hidden;
   max-width: 100%;
   margin: 0 0 0 0;
 }
@@ -64,7 +64,9 @@ p {
   font-size: 15px;
   font-weight: 700;
   opacity: .7;
+  max-width: 100%;
   color: #a160fb;
+  overflow: hidden;
 }
 .calculator-controls-wrp {
   position: relative;
