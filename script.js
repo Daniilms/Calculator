@@ -30,6 +30,7 @@
   let _isSecondNumberInput = false;
 
   let done = false;
+  let underAction = false;
   let atAll = 0;
 
   let allActionsArray = [];
@@ -68,6 +69,7 @@
     _isSecondNumberInput = false;
     atAll = 0;
     done = false;
+    underAction = false;
     userInput.textContent = 0;
     expression.textContent = makeExpression();
   }
@@ -85,7 +87,11 @@
 
   // логика кнопки '.'
   function getDot() {
-    if (firstStrInput === "" || secondStrInput === "") {
+    underAction = true;
+    if (done) {
+      _isSecondNumberInput = false;
+    }
+    if (firstStrInput === "") {
       if (!_isSecondNumberInput) {
         firstStrInput = "0." + firstStrInput;
         userInput.textContent = firstStrInput;
@@ -109,6 +115,10 @@
   }
   // логика кнопки процента
   function getPercent() {
+    underAction = true;
+    if (done) {
+      _isSecondNumberInput = false;
+    }
     if (!_isSecondNumberInput) {
       firstStrInput = Number(firstStrInput / 100);
       userInput.textContent = firstStrInput;
@@ -122,6 +132,10 @@
 
   // логика кнопки +/-
   function getNegative() {
+    underAction = true;
+    if (done) {
+      _isSecondNumberInput = false;
+    }
     if (firstStrInput === "") {
       userInput.textContent = 0;
     } else {
@@ -142,7 +156,6 @@
       done
     ) {
       secondStrInput = "";
-    } else {
     }
   }
 
@@ -197,8 +210,8 @@
   allNumsButtons.forEach((button) => {
     button.addEventListener("click", function (evt) {
       changeFontSize();
-      if (done && userInput.textContent !== 0) {
-        done = !done;
+      if (done && userInput.textContent !== 0 && !underAction) {
+        done = false;
         firstStrInput = "";
         secondStrInput = "";
         action = "";
@@ -253,12 +266,6 @@
     expression.textContent = makeExpression();
   });
 
-  let body = document.querySelector("body");
-  let demoBtn = document.createElement("button");
-  demoBtn.textContent = "Button";
-  body.append(demoBtn);
-
-  demoBtn.addEventListener("click", () => {});
   clearButton.addEventListener("click", allClear);
   negativeButton.addEventListener("click", getNegative);
   percentButton.addEventListener("click", getPercent);
