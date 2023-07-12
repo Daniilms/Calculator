@@ -36,8 +36,19 @@
   let allActionsArray = [];
   userInput.textContent = Number(0);
 
-  function validate(evt) {
-    /*    if (action == "/" && secondStrInput == "") {
+  function validate() {
+    if (action == "/" && secondStrInput == "" && !done) {
+      setTimeout(() => {
+        userInput.textContent = 0;
+        expression.textContent = 0;
+        atAll = 0;
+        firstStrInput = "";
+        secondStrInput = "";
+        _isSecondNumberInput = false;
+        action = "";
+      }, 2000);
+    }
+    if (secondStrInput === "0" && !done) {
       setTimeout(() => {
         userInput.textContent = 0;
         expression.textContent = 0;
@@ -48,17 +59,6 @@
         action = "";
       }, 2000);
     }
-    if (secondStrInput === "0") {
-      setTimeout(() => {
-        userInput.textContent = 0;
-        expression.textContent = 0;
-        atAll = 0;
-        firstStrInput = ``;
-        secondStrInput = ``;
-        _isSecondNumberInput = false;
-        action = "";
-      }, 2000);
-    } */
   }
 
   // логика кнопки AC
@@ -178,7 +178,6 @@
         break;
       case "-":
         atAll = firstNumber - secondNumber;
-
         break;
       case "/":
         if (secondStrInput !== "" && secondStrInput !== "0") {
@@ -188,10 +187,7 @@
         }
         break;
       case "x":
-        atAll *= Number(secondNumber);
-
         atAll = firstNumber * secondNumber;
-
         break;
       default:
         userInput.textContent = "Not working!";
@@ -239,10 +235,12 @@
           _isSecondNumberInput = true;
           action = evt.target.textContent;
         } else {
-          allOperations(evt);
-          firstStrInput = atAll;
-          secondStrInput = "";
           done = false;
+          if (!done) {
+            firstStrInput = atAll;
+          }
+          allOperations(evt);
+          secondStrInput = "";
           action = evt.target.textContent;
           _isSecondNumberInput = true;
         }
@@ -253,7 +251,6 @@
   });
 
   // нажатие кнопки "равно"
-  const equalArray = [];
   equalButton.addEventListener("click", (evt) => {
     allOperations();
     changeFontSize();
