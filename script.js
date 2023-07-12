@@ -37,7 +37,7 @@
   userInput.textContent = Number(0);
 
   function validate(evt) {
-    if (action == "/" && secondStrInput == "") {
+    /*    if (action == "/" && secondStrInput == "") {
       setTimeout(() => {
         userInput.textContent = 0;
         expression.textContent = 0;
@@ -58,7 +58,7 @@
         _isSecondNumberInput = false;
         action = "";
       }, 2000);
-    }
+    } */
   }
 
   // логика кнопки AC
@@ -182,8 +182,6 @@
         break;
       case "/":
         if (secondStrInput !== "" && secondStrInput !== "0") {
-          atAll /= Number(secondNumber);
-
           atAll = firstNumber / secondNumber;
         } else {
           validate();
