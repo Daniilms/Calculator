@@ -37,7 +37,7 @@
   userInput.textContent = Number(0);
 
   function validate() {
-    if (action == "/" && secondStrInput == "" && !done) {
+    /*    if (action == "/" && secondStrInput == "" && !done) {
       setTimeout(() => {
         userInput.textContent = 0;
         expression.textContent = 0;
@@ -58,7 +58,7 @@
         _isSecondNumberInput = false;
         action = "";
       }, 2000);
-    }
+    } */
   }
 
   // логика кнопки AC
