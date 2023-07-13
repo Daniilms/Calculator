@@ -25,40 +25,41 @@
 
   let firstStrInput = "";
   let secondStrInput = "";
-
   let action = "";
-  let _isSecondNumberInput = false;
 
+  let _isSecondNumberInput = false;
   let done = false;
   let underAction = false;
-  let atAll = 0;
 
+  let atAll = 0;
   let allActionsArray = [];
   userInput.textContent = Number(0);
 
-  function validate() {
-    /*    if (action == "/" && secondStrInput == "" && !done) {
+  function validate(evt) {
+    if ((firstStrInput === "0" || secondStrInput === "0") && action === "/") {
+      atAll = "Error";
       setTimeout(() => {
-        userInput.textContent = 0;
-        expression.textContent = 0;
-        atAll = 0;
-        firstStrInput = "";
-        secondStrInput = "";
-        _isSecondNumberInput = false;
-        action = "";
-      }, 2000);
+        allClear();
+      }, 1500);
     }
-    if (secondStrInput === "0" && !done) {
-      setTimeout(() => {
-        userInput.textContent = 0;
-        expression.textContent = 0;
-        atAll = 0;
-        firstStrInput = ``;
-        secondStrInput = ``;
-        _isSecondNumberInput = false;
-        action = "";
-      }, 2000);
-    } */
+    if (
+      done &&
+      userInput.textContent !== 0 &&
+      !underAction &&
+      evt.target.classList.contains("calculator-controls-button-numbers")
+    ) {
+      done = false;
+      firstStrInput = "";
+      secondStrInput = "";
+      action = "";
+      _isSecondNumberInput = false;
+    }
+    if (
+      firstStrInput.toString() === "0." &&
+      !evt.target.classList.contains("calculator-controls-button-numbers")
+    ) {
+      allClear();
+    }
   }
 
   // логика кнопки AC
@@ -78,7 +79,8 @@
     if (done) {
       return userInput.textContent;
     }
-    if (firstStrInput !== "") {
+
+    if (firstStrInput !== "" && !firstStrInput.toString().startsWith("00")) {
       return firstStrInput + action + secondStrInput;
     } else {
       return 0;
@@ -86,43 +88,69 @@
   }
 
   // логика кнопки '.'
-  function getDot() {
-    underAction = true;
+  function getDot(evt) {
+    checkForEqual(evt);
+    validate(evt);
+    if (firstStrInput.toString() !== "0" && secondStrInput !== "0") {
+      underAction = true;
+    }
     if (done) {
       _isSecondNumberInput = false;
     }
-    if (firstStrInput === "") {
-      if (!_isSecondNumberInput) {
+
+    if (!_isSecondNumberInput && !firstStrInput.toString().includes(".")) {
+      if (firstStrInput === "") {
         firstStrInput = "0." + firstStrInput;
         userInput.textContent = firstStrInput;
+      } else if (firstStrInput === "0") {
+        firstStrInput = "0.";
+        userInput.textContent = firstStrInput;
       } else {
-        secondStrInput = "0." + secondStrInput;
-        userInput.textContent = secondStrInput;
-      }
-      expression.textContent = makeExpression();
-    } else {
-      if (!_isSecondNumberInput) {
         firstStrInput = firstStrInput + ".";
         userInput.textContent = firstStrInput;
+      }
+    } else if (
+      _isSecondNumberInput &&
+      !secondStrInput.toString().includes(".")
+    ) {
+      if (secondStrInput === "") {
+        secondStrInput = "0." + secondStrInput;
+        userInput.textContent = secondStrInput;
+      } else if (secondStrInput === "0") {
+        secondStrInput = "0.";
+        userInput.textContent = secondStrInput;
       } else {
         secondStrInput = secondStrInput + ".";
         userInput.textContent = secondStrInput;
       }
-      expression.textContent = makeExpression();
     }
+    isDecimal = true;
+    expression.textContent = makeExpression();
 
     changeFontSize();
   }
   // логика кнопки процента
-  function getPercent() {
-    underAction = true;
+  function getPercent(evt) {
+    checkForEqual(evt);
+    validate(evt);
+    if (firstStrInput !== "0") {
+      underAction = true;
+    }
     if (done) {
       _isSecondNumberInput = false;
     }
-    if (!_isSecondNumberInput) {
+    if (
+      !_isSecondNumberInput &&
+      firstStrInput !== "" &&
+      firstStrInput !== "0"
+    ) {
       firstStrInput = Number(firstStrInput / 100);
       userInput.textContent = firstStrInput;
-    } else {
+    } else if (
+      _isSecondNumberInput &&
+      secondStrInput !== "" &&
+      secondStrInput !== "0"
+    ) {
       secondStrInput = Number(secondStrInput / 100);
       userInput.textContent = secondStrInput;
     }
@@ -131,21 +159,29 @@
   }
 
   // логика кнопки +/-
-  function getNegative() {
-    underAction = true;
+  function getNegative(evt) {
+    checkForEqual(evt);
+    validate(evt);
+    if (firstStrInput !== "0" || secondStrInput !== "0") {
+      underAction = true;
+    }
     if (done) {
       _isSecondNumberInput = false;
     }
-    if (firstStrInput === "") {
-      userInput.textContent = 0;
-    } else {
-      if (!_isSecondNumberInput) {
-        firstStrInput = -1 * firstStrInput;
-        userInput.textContent = Number(firstStrInput);
-      } else {
-        secondStrInput = -1 * secondStrInput;
-        userInput.textContent = Number(secondStrInput);
-      }
+    if (
+      !_isSecondNumberInput &&
+      firstStrInput !== "" &&
+      firstStrInput !== "0"
+    ) {
+      firstStrInput = -1 * firstStrInput;
+      userInput.textContent = Number(firstStrInput);
+    } else if (
+      _isSecondNumberInput &&
+      secondStrInput !== "" &&
+      secondStrInput !== "0"
+    ) {
+      secondStrInput = -1 * secondStrInput;
+      userInput.textContent = Number(secondStrInput);
     }
   }
 
@@ -180,7 +216,7 @@
         atAll = firstNumber - secondNumber;
         break;
       case "/":
-        if (secondStrInput !== "" && secondStrInput !== "0") {
+        if (secondNumber !== 0 && firstNumber !== 0) {
           atAll = firstNumber / secondNumber;
         } else {
           validate();
@@ -195,7 +231,6 @@
 
     userInput.textContent = atAll;
     expression.textContent = makeExpression();
-
     changeFontSize();
     return;
   }
@@ -203,20 +238,33 @@
   // слушатель событий для кнопок с цифрами
   allNumsButtons.forEach((button) => {
     button.addEventListener("click", function (evt) {
+      isDecimal = false;
       changeFontSize();
-      if (done && userInput.textContent !== 0 && !underAction) {
-        done = false;
-        firstStrInput = "";
-        secondStrInput = "";
-        action = "";
-        _isSecondNumberInput = false;
-      }
+      validate(evt);
       if (!_isSecondNumberInput) {
-        firstStrInput = firstStrInput + evt.target.textContent;
-        userInput.textContent = Number(firstStrInput);
+        if (
+          firstStrInput.toString().startsWith("0") &&
+          firstStrInput.toString().indexOf(".") !== 1
+        ) {
+          firstStrInput =
+            firstStrInput.toString().slice(1) + evt.target.textContent;
+          userInput.textContent = Number(firstStrInput);
+        } else {
+          firstStrInput = firstStrInput + evt.target.textContent;
+          userInput.textContent = Number(firstStrInput);
+        }
       } else {
-        secondStrInput = secondStrInput + evt.target.textContent;
-        userInput.textContent = Number(secondStrInput);
+        if (
+          secondStrInput.toString().startsWith("0") &&
+          secondStrInput.toString().indexOf(".") !== 1
+        ) {
+          secondStrInput =
+            secondStrInput.toString().slice(1) + evt.target.textContent;
+          userInput.textContent = Number(secondStrInput);
+        } else {
+          secondStrInput = secondStrInput + evt.target.textContent;
+          userInput.textContent = Number(secondStrInput);
+        }
       }
       expression.textContent = makeExpression();
     });
@@ -224,10 +272,10 @@
 
   // слушатель событий для кнопок с действиями
   allOperationsButtons.forEach((button) => {
-    button.addEventListener("click", function Actions(evt) {
+    button.addEventListener("click", function (evt) {
       changeFontSize();
-      validate();
       checkForEqual(evt);
+      validate(evt);
       allActionsArray.push(evt.target.textContent);
 
       if (firstStrInput !== "" && firstStrInput !== 0) {
@@ -235,12 +283,12 @@
           _isSecondNumberInput = true;
           action = evt.target.textContent;
         } else {
-          done = false;
+          allOperations(evt);
           if (!done) {
             firstStrInput = atAll;
           }
-          allOperations(evt);
           secondStrInput = "";
+          done = false;
           action = evt.target.textContent;
           _isSecondNumberInput = true;
         }
@@ -255,6 +303,7 @@
     allOperations();
     changeFontSize();
     checkForEqual(evt);
+
     done = true;
     allActionsArray.push(evt.target.textContent);
     firstStrInput = atAll;

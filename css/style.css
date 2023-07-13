@@ -92,8 +92,6 @@ p {
   ;
 }
 
-.calculator-controls-operations {
-}
 .calculator-controls-button-operations-prefix {
   background-image: url('../img/Mnemonic.svg');
   background-size: 37%;
@@ -118,22 +116,10 @@ p {
   transition: all ease-in-out 0.4s;
 }
 .calculator-controls-button:hover {
-  background-color: white;
-  color: #191919;
-  border-color: white;
+  background-color: #a160fb;
+  color: white;
+  border-color: #a160fb;
   cursor: pointer;
-}
-
-/* #1c1c1c */
-.calculator-controls-button-operations {
-}
-.calculator-controls-numbers {
-  
-}
-.calculator-controls-button-numbers {
- 
-}
-.calculator-controls-button {
 }
 
 .calculator-controls-button-operations-c {
