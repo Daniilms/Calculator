@@ -61,6 +61,39 @@
       allClear();
     }
   }
+  // Функция убирает повторяющийся код в 'отдельных действиях'.
+  function getUniCheckForActions(strInput, actionType) {
+    if (strInput !== "" && strInput !== "0") {
+      if (actionType === "%") {
+        strInput = Number(strInput / 100);
+        userInput.textContent = strInput;
+      }
+      if (actionType === "+-") {
+        strInput = Number(-1 * strInput);
+        userInput.textContent = strInput;
+      }
+    }
+    return strInput;
+  }
+
+  // Функция сокращает проверки в действиях с точкой.
+  function checkForDoteAction(strInput) {
+    if (strInput.toString().includes(".")) {
+      return 0;
+    }
+    if (strInput !== "0" && strInput !== "") {
+      strInput = strInput + ".";
+    }
+    if (strInput === "") {
+      strInput = "0." + strInput;
+    }
+    if (strInput === "0") {
+      strInput = "0.";
+    }
+
+    userInput.textContent = strInput;
+    return strInput;
+  }
 
   // логика кнопки AC
   function allClear() {
@@ -98,39 +131,20 @@
       _isSecondNumberInput = false;
     }
 
-    if (!_isSecondNumberInput && !firstStrInput.toString().includes(".")) {
-      if (firstStrInput === "") {
-        firstStrInput = "0." + firstStrInput;
-        userInput.textContent = firstStrInput;
-      } else if (firstStrInput === "0") {
-        firstStrInput = "0.";
-        userInput.textContent = firstStrInput;
-      } else {
-        firstStrInput = firstStrInput + ".";
-        userInput.textContent = firstStrInput;
-      }
-    } else if (
-      _isSecondNumberInput &&
-      !secondStrInput.toString().includes(".")
-    ) {
-      if (secondStrInput === "") {
-        secondStrInput = "0." + secondStrInput;
-        userInput.textContent = secondStrInput;
-      } else if (secondStrInput === "0") {
-        secondStrInput = "0.";
-        userInput.textContent = secondStrInput;
-      } else {
-        secondStrInput = secondStrInput + ".";
-        userInput.textContent = secondStrInput;
-      }
+    if (!_isSecondNumberInput) {
+      firstStrInput = checkForDoteAction(firstStrInput);
+    } else {
+      secondStrInput = checkForDoteAction(secondStrInput);
     }
     isDecimal = true;
     expression.textContent = makeExpression();
 
     changeFontSize();
   }
+
   // логика кнопки процента
   function getPercent(evt) {
+    getUniCheckForActions();
     checkForEqual(evt);
     validate(evt);
     if (firstStrInput !== "0") {
@@ -139,20 +153,10 @@
     if (done) {
       _isSecondNumberInput = false;
     }
-    if (
-      !_isSecondNumberInput &&
-      firstStrInput !== "" &&
-      firstStrInput !== "0"
-    ) {
-      firstStrInput = Number(firstStrInput / 100);
-      userInput.textContent = firstStrInput;
-    } else if (
-      _isSecondNumberInput &&
-      secondStrInput !== "" &&
-      secondStrInput !== "0"
-    ) {
-      secondStrInput = Number(secondStrInput / 100);
-      userInput.textContent = secondStrInput;
+    if (!_isSecondNumberInput) {
+      firstStrInput = getUniCheckForActions(firstStrInput, "%");
+    } else {
+      secondStrInput = getUniCheckForActions(secondStrInput, "%");
     }
     expression.textContent = makeExpression();
     changeFontSize();
@@ -168,25 +172,18 @@
     if (done) {
       _isSecondNumberInput = false;
     }
-    if (
-      !_isSecondNumberInput &&
-      firstStrInput !== "" &&
-      firstStrInput !== "0"
-    ) {
-      firstStrInput = -1 * firstStrInput;
-      userInput.textContent = Number(firstStrInput);
-    } else if (
-      _isSecondNumberInput &&
-      secondStrInput !== "" &&
-      secondStrInput !== "0"
-    ) {
-      secondStrInput = -1 * secondStrInput;
-      userInput.textContent = Number(secondStrInput);
+
+    if (!_isSecondNumberInput) {
+      firstStrInput = getUniCheckForActions(firstStrInput, "+-");
+    } else {
+      secondStrInput = getUniCheckForActions(secondStrInput, "+-");
     }
   }
 
   // функция проверки повторного нажатия на 'равно'
+
   function checkForEqual(evt) {
+    console.log(firstStrInput, secondStrInput, evt.target.textContent, done);
     if (
       allActionsArray[allActionsArray.length - 1] !== evt.target.textContent &&
       done
@@ -234,37 +231,33 @@
     changeFontSize();
     return;
   }
-
+  function checkForDecimal(strInput, value) {
+    if (
+      strInput.toString().startsWith("0") &&
+      strInput.toString().indexOf(".") !== 1
+    ) {
+      strInput = strInput.toString().slice(1) + value;
+      userInput.textContent = Number(strInput);
+    } else {
+      strInput = strInput + value;
+      userInput.textContent = Number(strInput);
+    }
+    return strInput;
+  }
   // слушатель событий для кнопок с цифрами
   allNumsButtons.forEach((button) => {
     button.addEventListener("click", function (evt) {
       isDecimal = false;
       changeFontSize();
       validate(evt);
+      allActionsArray.push(evt.target.textContent);
       if (!_isSecondNumberInput) {
-        if (
-          firstStrInput.toString().startsWith("0") &&
-          firstStrInput.toString().indexOf(".") !== 1
-        ) {
-          firstStrInput =
-            firstStrInput.toString().slice(1) + evt.target.textContent;
-          userInput.textContent = Number(firstStrInput);
-        } else {
-          firstStrInput = firstStrInput + evt.target.textContent;
-          userInput.textContent = Number(firstStrInput);
-        }
+        firstStrInput = checkForDecimal(firstStrInput, evt.target.textContent);
       } else {
-        if (
-          secondStrInput.toString().startsWith("0") &&
-          secondStrInput.toString().indexOf(".") !== 1
-        ) {
-          secondStrInput =
-            secondStrInput.toString().slice(1) + evt.target.textContent;
-          userInput.textContent = Number(secondStrInput);
-        } else {
-          secondStrInput = secondStrInput + evt.target.textContent;
-          userInput.textContent = Number(secondStrInput);
-        }
+        secondStrInput = checkForDecimal(
+          secondStrInput,
+          evt.target.textContent
+        );
       }
       expression.textContent = makeExpression();
     });
@@ -277,14 +270,13 @@
       checkForEqual(evt);
       validate(evt);
       allActionsArray.push(evt.target.textContent);
-
       if (firstStrInput !== "" && firstStrInput !== 0) {
         if (action === "") {
           _isSecondNumberInput = true;
           action = evt.target.textContent;
         } else {
           allOperations(evt);
-          if (!done) {
+          if (done) {
             firstStrInput = atAll;
           }
           secondStrInput = "";
@@ -303,7 +295,6 @@
     allOperations();
     changeFontSize();
     checkForEqual(evt);
-
     done = true;
     allActionsArray.push(evt.target.textContent);
     firstStrInput = atAll;
